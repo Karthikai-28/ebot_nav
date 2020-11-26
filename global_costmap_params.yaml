@@ -1,0 +1,23 @@
+global_costmap:
+  global_frame: map
+  robot_base_frame: ebot_base
+
+  update_frequency: 10.0 #default 5.0
+  publish_frequency: 10.0 #default 0.5
+
+  static_map: true
+
+  transform_tolerance: 0.5
+  cost_scaling_factor: 5.0
+  inflation_radius: 0.6
+
+  planner_frequency: 1.0
+  planner_paitence: 5.0
+
+  use_dijkstra: false
+  use_quadratic: true
+  use_grid_path: false
+  old_navfn_behavior: false
+  default_tolerance: 0
+  lethal_cost: 253
+  neutral_cost: 50

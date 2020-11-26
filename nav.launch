@@ -1,0 +1,50 @@
+<launch>
+  <!--Python Script-->>
+  <node name="goal_sequence" pkg="ebot_nav" type="goal_sequence.py" output="screen"/>
+  
+
+    <!--including the launch file with a navigation world-->
+    <!-- <include file="$(find ebot_gazebo)/launch/office_world.launch" /> -->
+    <!-- including launch file for localization using AMCL -->
+    <include file="$(find ebot_nav)/launch/amcl.launch" />
+     <!-- including launch file for visualizing in rviz -->
+    <include file="$(find ebot_description)/launch/ebot_visualize.launch"/>
+        
+
+        <!-- Spawn the robot model -->
+    <!-- <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" 
+        args="-urdf -param robot_description -model ebot -x $(arg x) -y $(arg y) -z $(arg z)" /> -->
+    
+    <!--Map Server-->
+    <arg name = "map_file" value = "$(find ebot_nav)/maps/sample_world.yaml"/>
+    <node pkg="map_server" type="map_server" args = "$(arg map_file)" name="map_server" output="screen"/>
+
+    <!--Place Map frame at Odometry frame-->
+    <!-- <node pkg="tf" type="static_transform_publisher" name="map_odom_broadcaster" args="0 0 0 0 0 0 map odom 100"/> -->
+   
+
+      <!-- Move base -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen"> 
+    <rosparam file="$(find ebot_nav)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find ebot_nav)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find ebot_nav)/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find ebot_nav)/config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find ebot_nav)/config/base_local_planner_params.yaml" command="load" /> 
+    <rosparam file="$(find ebot_nav)/config/dwa_local_planner_params.yaml" command="load" />   
+    <rosparam file="$(find ebot_nav)/config/move_base_params.yaml" command="load" />
+    <!-- <rosparam file="$(find ebot_nav)/config/navfn_global_planner_params.yaml" command="load" /> -->
+
+    <param name="move_base/DWAPlannerROS/yaw_goal_tolerance" value="1.0"/>
+    <param name="move_base/DWAPlannerROS/xy_goal_tolerance" value="1.0"/>
+    <!-- <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" /> -->
+    <!-- <param name="base_global_planner" value="navfn/NavfnROS" /> --> -->
+
+    <remap from="scan" to="ebot/laser/scan" />
+    <remap from="cmd_vel" to="cmd_vel"/>
+    <remap from="odom" to="odom" />
+
+
+  </node> 
+
+</launch>
+
